@@ -34,9 +34,9 @@ const game = (() => {
     };
 
     const play = () => {
+        displayController.initializeBoard();
+        displayController.setTurnDisplay(`It's your turn, ${getCurrentPlayer().getName()}!`);
         
-        displayController.populateBoard();
-        displayController.makeSquaresClickable();
     };
 
     return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer };
@@ -44,6 +44,11 @@ const game = (() => {
 
 const displayController = (() => {
     const getBoard = () => document.querySelector(".board");
+
+    const setTurnDisplay = (text) => {
+        turnDisplay = document.querySelector(".turn-display");
+        turnDisplay.textContent = text;
+    };
 
     const populateBoard = () => {
         const board = getBoard();
@@ -74,11 +79,19 @@ const displayController = (() => {
                 const currentPlayerToken = game.getCurrentPlayer().getToken();
                 square.textContent = currentPlayerToken;
                 gameBoard.placeToken(currentPlayerToken, square.dataset.row, square.dataset.column);
+                game.swapCurrentPlayer();
+                setTurnDisplay(game.getCurrentPlayer().getName());
             });
         });
     };
 
-    return { populateBoard, makeSquaresClickable };
+    const initializeBoard = () => {
+        setTurnDisplay(game.getCurrentPlayer().getName());
+        populateBoard();
+        makeSquaresClickable();
+    };
+
+    return { initializeBoard };
 })();
 
 game.play();
