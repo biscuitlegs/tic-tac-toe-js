@@ -1,5 +1,5 @@
 const gameBoard = (() => {
-    const board = [
+    let board = [
                     ["", "", ""],
                     ["", "", ""],
                     ["", "", ""]
@@ -7,7 +7,11 @@ const gameBoard = (() => {
     
     const getBoard = () => board;
     const placeToken = (token, x, y) => {
-        board[x][y] = token;
+        //Reversing board array flips board vertically so board[0][0] is bottom left rather than top left.
+        //Temporary flip makes x and y coordinates less confusing to use.
+        let rotatedBoard = board.reverse();
+        rotatedBoard[x - 1][y - 1] = token;
+        board = rotatedBoard.reverse();
     };
 
     return { getBoard, placeToken };
@@ -32,7 +36,7 @@ const game = (() => {
     const play = () => {
         
         displayController.populateBoard();
-        displayController.addEventListeners();
+        displayController.makeSquaresClickable();
     };
 
     return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer };
@@ -43,30 +47,38 @@ const displayController = (() => {
 
     const populateBoard = () => {
         const board = getBoard();
+        let rowNum = 3;
+        let colNum = 1;
+
         gameBoard.getBoard().flat().forEach(token => {
             let boardSquare = document.createElement("div");
             boardSquare.classList.add("board-square");
+            boardSquare.setAttribute("data-row", rowNum);
+            boardSquare.setAttribute("data-column", colNum);
             boardSquare.textContent = token;
             board.appendChild(boardSquare);
+
+            if (boardSquare.dataset.column == 3) {
+                rowNum--;
+                colNum = 1;
+            } else {
+                colNum++;
+            }
         });
     };
 
-    const addEventListeners = () => {
+    const makeSquaresClickable = () => {
         const boardSquares = document.querySelectorAll(".board-square");
         boardSquares.forEach(square => {
             square.addEventListener("click", () => {
-                square.textContent = game.getCurrentPlayer().getToken();
+                const currentPlayerToken = game.getCurrentPlayer().getToken();
+                square.textContent = currentPlayerToken;
+                gameBoard.placeToken(currentPlayerToken, square.dataset.row, square.dataset.column);
             });
         });
     };
 
-    const updateBoard = () => {
-        const board = getBoard();
-        board.innerHTML = "";
-        populateBoard(board);
-    };
-
-    return { populateBoard, updateBoard, addEventListeners };
+    return { populateBoard, makeSquaresClickable };
 })();
 
 game.play();
