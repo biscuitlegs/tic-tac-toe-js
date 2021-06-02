@@ -4,15 +4,46 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="styles/main.css">
     <title>Tic Tac Toe</title>
 </head>
 <body>
-    <div class="board"></div>
-    <div class="turn-display"></div>
-    <button class="new-game-btn">New Game</button>
-    <input class="player1-name-input" type="text">
-    <input class="player2-name-input" type="text">
+    <nav class="main-nav notification is-link has-text-centered">
+        Like this project? Check it out on <a href="#">Github <i class="bi bi-github"></i></a>
+    </nav>
+    <main class="container box mt-5">
+        <div class="board"></div>
+        <div class="form-container mt-3 has-text-centered">
+            <div class="container mt-4">
+                <button class="new-game-btn button is-primary">New Game</button>
+                <div class="dropdown is-hoverable">
+                    <div class="dropdown-trigger">
+                      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
+                        <span>Players</span>
+                        <span class="icon is-small">
+                            <i class="bi bi-caret-down-fill"></i>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                      <div class="dropdown-content is-flex is-flex-direction-row">
+                        <div class="dropdown-item">
+                            <label for="player1-name">Player 1 name:</label>
+                            <input class="player1-name-input input" id="player1-name" type="text" placeholder="Mark">
+                        </div>
+                        <div class="dropdown-item">
+                            <label for="player2-name">Player 2 name:</label>
+                            <input class="player2-name-input input" id="player2-name" type="text" placeholder="Jess">
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="turn-display notification is-info is-light mt-4">Hi! To start playing, hover over <span class="has-text-weight-bold">Players</span> to enter your names and then click the <span class="has-text-weight-bold">New Game</span> button.</div>
+    </main>
 </body>
 
 <script src="scripts/main.js"></script>

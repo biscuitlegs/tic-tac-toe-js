@@ -128,7 +128,11 @@ const displayController = (() => {
         const playMove = (e) => {
             if (e.target.textContent != "") return;
             const currentPlayerToken = game.getCurrentPlayer().getToken();
-            e.target.textContent = currentPlayerToken;
+            if (currentPlayerToken === "o") {
+                e.target.insertAdjacentHTML("beforeend", `<i class="bi bi-circle"></i>`);
+            } else {
+                e.target.insertAdjacentHTML("beforeend", `<i class="bi bi-x-lg"></i>`);
+            }
             gameBoard.placeToken(currentPlayerToken, e.target.dataset.row, e.target.dataset.column);
             if (game.isGameOver()) {
                 switch (true) {
