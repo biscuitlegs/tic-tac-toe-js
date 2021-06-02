@@ -4,8 +4,23 @@ const gameBoard = (() => {
                     ["", "", ""],
                     ["", "", ""]
                 ];
-    
+
     const getBoard = () => board;
+    const getRows = () => board;
+    const getColumns = () => {
+        let columns = [];
+        for (let i = 0; i <= 2; i++) {
+            columns.push(getRows().map(row => row[i]));
+        }
+
+        return columns;
+    };
+    const getDiagonals = () => {
+        const diagonal1 =  getColumns().map((column, index) => column[index]);
+        const diagonal2 = getColumns().reverse().map((column, index) => column[index]);
+
+        return [diagonal1, diagonal2];
+    };
     const placeToken = (token, x, y) => {
         //Reversing board array flips board vertically so board[0][0] is bottom left rather than top left.
         //Temporary flip makes x and y coordinates less confusing to use.
@@ -14,7 +29,7 @@ const gameBoard = (() => {
         board = rotatedBoard.reverse();
     };
 
-    return { getBoard, placeToken };
+    return { getBoard, getRows, getColumns, getDiagonals, placeToken };
 })();
 
 const Player = (name = "Player1", token = "x") => {
@@ -35,21 +50,35 @@ const game = (() => {
 
     const play = () => {
         displayController.initializeBoard();
-        displayController.setTurnDisplay(`It's your turn, ${getCurrentPlayer().getName()}!`);
         
     };
 
-    return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer };
+    const isWinner = () => {
+        const rows = gameBoard.getRows();
+        const columns = gameBoard.getColumns();
+        const diagonals = gameBoard.getDiagonals();
+        let matchingLine;
+        [rows, columns, diagonals].forEach(direction => {
+            direction.forEach(line => {
+                if (line.every(token => token === "x") || line.every(token => token === "o")) {
+                    matchingLine = true;
+                }
+            });
+        });
+
+        return matchingLine || false;
+    };
+
+    return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer, isWinner };
 })();
 
 const displayController = (() => {
     const getBoard = () => document.querySelector(".board");
-
+    const getBoardSquares = () => document.querySelectorAll(".board-square");
     const setTurnDisplay = (text) => {
         turnDisplay = document.querySelector(".turn-display");
         turnDisplay.textContent = text;
     };
-
     const populateBoard = () => {
         const board = getBoard();
         let rowNum = 3;
@@ -71,27 +100,33 @@ const displayController = (() => {
             }
         });
     };
-
     const makeSquaresClickable = () => {
-        const boardSquares = document.querySelectorAll(".board-square");
-        boardSquares.forEach(square => {
-            square.addEventListener("click", () => {
-                const currentPlayerToken = game.getCurrentPlayer().getToken();
-                square.textContent = currentPlayerToken;
-                gameBoard.placeToken(currentPlayerToken, square.dataset.row, square.dataset.column);
-                game.swapCurrentPlayer();
-                setTurnDisplay(game.getCurrentPlayer().getName());
-            });
+        const playMove = (e) => {
+            const currentPlayerToken = game.getCurrentPlayer().getToken();
+            e.target.textContent = currentPlayerToken;
+            gameBoard.placeToken(currentPlayerToken, e.target.dataset.row, e.target.dataset.column);
+            if (game.isWinner()) {
+                setTurnDisplay(`Congrats ${game.getCurrentPlayer().getName()}, you won!`);
+                makeSquaresUnclickable();
+                return;
+            }
+            game.swapCurrentPlayer();
+            setTurnDisplay(game.getCurrentPlayer().getName());
+        };
+        const makeSquaresUnclickable = () => {
+            getBoardSquares().forEach(square => square.removeEventListener("click", playMove));
+        };
+        getBoardSquares().forEach(square => {
+            square.addEventListener("click", playMove);
         });
     };
-
     const initializeBoard = () => {
         setTurnDisplay(game.getCurrentPlayer().getName());
         populateBoard();
         makeSquaresClickable();
     };
 
-    return { initializeBoard };
+    return { initializeBoard, getBoardSquares };
 })();
 
 game.play();
