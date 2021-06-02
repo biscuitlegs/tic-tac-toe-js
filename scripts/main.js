@@ -27,8 +27,15 @@ const gameBoard = (() => {
         rotatedBoard[x - 1][y - 1] = token;
         board = rotatedBoard.reverse();
     };
+    const resetBoard = () => {
+        board = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ];
+    };
 
-    return { getBoard, getRows, getColumns, getDiagonals, placeToken };
+    return { getBoard, getRows, getColumns, getDiagonals, placeToken, resetBoard };
 })();
 
 const Player = (name = "Player1", token = "x") => {
@@ -70,6 +77,12 @@ const game = (() => {
     const isGameOver = () => {
         return isWinner() || isDraw();
     };
+    const newGameButton = document.querySelector(".new-game-btn");
+    newGameButton.addEventListener("click", () => {
+        displayController.resetBoard();
+        gameBoard.resetBoard();
+        game.play();
+    });
 
     return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer, isWinner, isDraw, isGameOver };
 })();
@@ -136,8 +149,11 @@ const displayController = (() => {
         populateBoard();
         makeSquaresClickable();
     };
+    const resetBoard = () => {
+        document.querySelector(".board").innerHTML = "";
+    };
 
-    return { initializeBoard, getBoardSquares };
+    return { initializeBoard, getBoardSquares, resetBoard };
 })();
 
-game.play();
+displayController.initializeBoard();
