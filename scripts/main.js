@@ -4,7 +4,6 @@ const gameBoard = (() => {
                     ["", "", ""],
                     ["", "", ""]
                 ];
-
     const getBoard = () => board;
     const getRows = () => board;
     const getColumns = () => {
@@ -41,18 +40,15 @@ const Player = (name = "Player1", token = "x") => {
 
 const game = (() => {
     let players = [Player("Player1", "x"), Player("Player2", "o")];
-
     const getPlayers = () => players;
     const getCurrentPlayer = () => players[0];
     const swapCurrentPlayer = () => {
         players = players.reverse();
     };
-
     const play = () => {
         displayController.initializeBoard();
         
     };
-
     const isWinner = () => {
         const rows = gameBoard.getRows();
         const columns = gameBoard.getColumns();
@@ -68,8 +64,14 @@ const game = (() => {
 
         return matchingLine || false;
     };
+    const isDraw = () => {
+        return gameBoard.getBoard().flat().every(square => square != "");
+    };
+    const isGameOver = () => {
+        return isWinner() || isDraw();
+    };
 
-    return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer, isWinner };
+    return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer, isWinner, isDraw, isGameOver };
 })();
 
 const displayController = (() => {
@@ -106,9 +108,17 @@ const displayController = (() => {
             const currentPlayerToken = game.getCurrentPlayer().getToken();
             e.target.textContent = currentPlayerToken;
             gameBoard.placeToken(currentPlayerToken, e.target.dataset.row, e.target.dataset.column);
-            if (game.isWinner()) {
-                setTurnDisplay(`Congrats ${game.getCurrentPlayer().getName()}, you won!`);
+            if (game.isGameOver()) {
+                switch (true) {
+                    case game.isWinner():
+                        setTurnDisplay(`Congrats ${game.getCurrentPlayer().getName()}, you won!`);
+                        break;
+                    case game.isDraw():
+                        setTurnDisplay("Well, looks like this game was a tie!");
+                        break;
+                }
                 makeSquaresUnclickable();
+                
                 return;
             }
             game.swapCurrentPlayer();
