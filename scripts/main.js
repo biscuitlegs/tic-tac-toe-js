@@ -102,6 +102,7 @@ const displayController = (() => {
     };
     const makeSquaresClickable = () => {
         const playMove = (e) => {
+            if (e.target.textContent != "") return;
             const currentPlayerToken = game.getCurrentPlayer().getToken();
             e.target.textContent = currentPlayerToken;
             gameBoard.placeToken(currentPlayerToken, e.target.dataset.row, e.target.dataset.column);
