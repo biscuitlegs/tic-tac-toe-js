@@ -38,23 +38,26 @@ const gameBoard = (() => {
     return { getBoard, getRows, getColumns, getDiagonals, placeToken, resetBoard };
 })();
 
-const Player = (name = "Player1", token = "x") => {
+const Player = (playerName = "Player1", playerToken = "x", playerId = 1) => {
+    let name = playerName;
+    let token = playerToken;
+    let id = playerId;
+    const getPlayerId = () => id;
     const getName = () => name;
     const getToken = () => token;
+    const setName = (newName) => name = newName;
 
-    return { getName, getToken };
+    return { getName, getToken, setName, getPlayerId };
 };
 
 const game = (() => {
-    let players = [Player("Player1", "x"), Player("Player2", "o")];
+    let players = [Player("Player1", "x", 1), Player("Player2", "o", 2)];
     const getPlayers = () => players;
+    const player1 = players.find(player => player.getPlayerId() === 1);
+    const player2 =  players.find(player => player.getPlayerId() === 2);
     const getCurrentPlayer = () => players[0];
     const swapCurrentPlayer = () => {
         players = players.reverse();
-    };
-    const play = () => {
-        displayController.initializeBoard();
-        
     };
     const isWinner = () => {
         const rows = gameBoard.getRows();
@@ -81,10 +84,16 @@ const game = (() => {
     newGameButton.addEventListener("click", () => {
         displayController.resetBoard();
         gameBoard.resetBoard();
-        game.play();
+        displayController.populateBoard();
+        const player1NameInput = document.querySelector(".player1-name-input");
+        const player2NameInput = document.querySelector(".player2-name-input");
+        player1.setName(player1NameInput.value);
+        player2.setName(player2NameInput.value);
+        displayController.setTurnDisplay(`It's ${getCurrentPlayer().getName()}'s turn.`);
+        displayController.makeSquaresClickable();
     });
 
-    return { play, getPlayers, getCurrentPlayer, swapCurrentPlayer, isWinner, isDraw, isGameOver };
+    return { getPlayers, getCurrentPlayer, swapCurrentPlayer, isWinner, isDraw, isGameOver };
 })();
 
 const displayController = (() => {
@@ -135,7 +144,7 @@ const displayController = (() => {
                 return;
             }
             game.swapCurrentPlayer();
-            setTurnDisplay(game.getCurrentPlayer().getName());
+            setTurnDisplay(`It's ${game.getCurrentPlayer().getName()}'s turn.`);
         };
         const makeSquaresUnclickable = () => {
             getBoardSquares().forEach(square => square.removeEventListener("click", playMove));
@@ -144,16 +153,11 @@ const displayController = (() => {
             square.addEventListener("click", playMove);
         });
     };
-    const initializeBoard = () => {
-        setTurnDisplay(game.getCurrentPlayer().getName());
-        populateBoard();
-        makeSquaresClickable();
-    };
     const resetBoard = () => {
         document.querySelector(".board").innerHTML = "";
     };
 
-    return { initializeBoard, getBoardSquares, resetBoard };
+    return { populateBoard, makeSquaresClickable, getBoardSquares, resetBoard, setTurnDisplay };
 })();
 
-displayController.initializeBoard();
+displayController.populateBoard();
