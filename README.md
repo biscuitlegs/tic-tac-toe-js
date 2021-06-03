@@ -1,6 +1,6 @@
 # Tic Tac Toe JS
 
-## [Play it live here!]()
+## [Play it live here!](https://biscuitlegs.github.io/tic-tac-toe-js/)
 
 ## About
 A two player tic tac toe game that can be played in a browser.
