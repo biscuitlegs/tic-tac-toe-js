@@ -89,7 +89,7 @@ const game = (() => {
         const player2NameInput = document.querySelector(".player2-name-input");
         player1.setName(player1NameInput.value);
         player2.setName(player2NameInput.value);
-        displayController.setTurnDisplay(`It's ${getCurrentPlayer().getName()}'s turn.`);
+        displayController.setTurnDisplay(`<p>It's <span class="has-text-weight-bold">${getCurrentPlayer().getName()}</span>'s turn.</p>`);
         displayController.makeSquaresClickable();
     });
 
@@ -99,9 +99,9 @@ const game = (() => {
 const displayController = (() => {
     const getBoard = () => document.querySelector(".board");
     const getBoardSquares = () => document.querySelectorAll(".board-square");
-    const setTurnDisplay = (text) => {
-        turnDisplay = document.querySelector(".turn-display");
-        turnDisplay.textContent = text;
+    const turnDisplay = document.querySelector(".turn-display");
+    const setTurnDisplay = (html) => {
+        turnDisplay.innerHTML = html;
     };
     const populateBoard = () => {
         const board = getBoard();
@@ -139,10 +139,10 @@ const displayController = (() => {
             if (game.isGameOver()) {
                 switch (true) {
                     case game.isWinner():
-                        setTurnDisplay(`Congrats ${game.getCurrentPlayer().getName()}, you won!`);
+                        setTurnDisplay(`<p>Congrats <span class="has-text-weight-bold">${game.getCurrentPlayer().getName()}</span>, you won!</p>`);
                         break;
                     case game.isDraw():
-                        setTurnDisplay("Well, looks like this game was a tie!");
+                        setTurnDisplay("<p>Well, looks like this game was a tie!<p>");
                         break;
                 }
                 makeSquaresUnclickable();
@@ -150,7 +150,7 @@ const displayController = (() => {
                 return;
             }
             game.swapCurrentPlayer();
-            setTurnDisplay(`It's ${game.getCurrentPlayer().getName()}'s turn.`);
+            setTurnDisplay(`<p>It's <span class="has-text-weight-bold">${game.getCurrentPlayer().getName()}</span>'s turn.<p>`);
         };
         const makeSquaresUnclickable = () => {
             getBoardSquares().forEach(square => square.removeEventListener("click", playMove));
