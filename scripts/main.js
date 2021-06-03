@@ -126,7 +126,9 @@ const displayController = (() => {
     };
     const makeSquaresClickable = () => {
         const playMove = (e) => {
-            if (e.target.textContent != "") return;
+            if (e.target.childElementCount > 0  || e.target != e.currentTarget) {
+                return;
+            }
             const currentPlayerToken = game.getCurrentPlayer().getToken();
             if (currentPlayerToken === "o") {
                 e.target.insertAdjacentHTML("beforeend", `<i class="bi bi-circle"></i>`);
