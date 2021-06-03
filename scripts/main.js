@@ -87,8 +87,8 @@ const game = (() => {
         displayController.populateBoard();
         const player1NameInput = document.querySelector(".player1-name-input");
         const player2NameInput = document.querySelector(".player2-name-input");
-        player1.setName(player1NameInput.value);
-        player2.setName(player2NameInput.value);
+        player1.setName(player1NameInput.value || player1.getName());
+        player2.setName(player2NameInput.value || player2.getName());
         displayController.setTurnDisplay(`<p>It's <span class="has-text-weight-bold">${getCurrentPlayer().getName()}</span>'s turn.</p>`);
         displayController.makeSquaresClickable();
     });
@@ -107,7 +107,6 @@ const displayController = (() => {
         const board = getBoard();
         let rowNum = 3;
         let colNum = 1;
-
         gameBoard.getBoard().flat().forEach(token => {
             let boardSquare = document.createElement("div");
             boardSquare.classList.add("board-square");
